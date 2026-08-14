@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Pairing - FS2024 Client</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <main class="panel-shell">
+      <header class="topbar">
+        <div>
+          <h1>&lt;? FS2024 Client v1.0.0</h1>
+        </div>
+        <div class="status-indicator connected" aria-label="Connection status">●</div>
+      </header>
+      <section class="controls">
+        <div class="control-card">
+          <h2 style="margin:0 0 10px 0;font-size:0.95rem;letter-spacing:0.08em;text-transform:uppercase;color:#cbd5e1;">Pairing Info</h2>
+          <div style="margin-top:15px;padding:12px;background-color:#1e293b;border-radius:4px;font-size:0.9rem;color:#cbd5e1;">
+            <div>
+              <span style="color:#94a3b8;">Run on:</span> <strong id="runLocation" style="color:#cbd5e1; font-size:1.05em;">--</strong>
+            </div>
+          </div>
+        </div>
+        <div class="control-card" style="margin-top:15px;">
+          <div class="mode-row">
+            <a class="toggle" href="/" style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center;min-width:160px;">← Back</a>
+          </div>
+        </div>
+      </section>
+    </main>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/pairing.js"></script>
+  </body>
+</html>

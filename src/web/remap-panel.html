@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>REMAP Panel</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <main class="panel-shell">
+      <header class="topbar">
+        <div>
+          <h1>&lt;? REMAP Panel v1.0.0</h1>
+        </div>
+        <div class="status-indicator" id="status" aria-label="Connection status">●</div>
+      </header>
+
+      <section class="controls">
+        <form id="headingForm">
+          <div class="control-card compact-row-control">
+            <button type="button" class="subsystem-toggle compact-toggle" data-action="toggleSubsystem" data-subsystem="hdg">HDG</button>
+            <div class="value-display" id="headingValue">123</div>
+            <button type="button" class="btn compact-step" data-action="headingDown">◀</button>
+            <input id="headingInput" type="number" value="123" inputmode="numeric" enterkeyhint="done" />
+            <button type="submit" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;border:0;overflow:hidden;clip:rect(0, 0, 0, 0);white-space:nowrap;" aria-hidden="true" tabindex="-1">Submit</button>
+            <button type="button" class="btn compact-step" data-action="headingUp">▶</button>
+          </div>
+        </form>
+
+        <form id="altitudeForm">
+          <div class="control-card compact-row-control">
+            <button type="button" class="subsystem-toggle compact-toggle" data-action="toggleSubsystem" data-subsystem="alt">ALT</button>
+            <div class="value-display" id="altitudeValue">12000</div>
+            <button type="button" class="btn compact-step" data-action="altitudeDown">◀</button>
+            <input id="altitudeInput" type="number" value="12000" inputmode="numeric" enterkeyhint="done" />
+            <button type="submit" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;border:0;overflow:hidden;clip:rect(0, 0, 0, 0);white-space:nowrap;" aria-hidden="true" tabindex="-1">Submit</button>
+            <button type="button" class="btn compact-step" data-action="altitudeUp">▶</button>
+          </div>
+        </form>
+
+        <form id="vsForm">
+          <div class="control-card compact-row-control">
+            <button type="button" class="subsystem-toggle compact-toggle" data-action="toggleSubsystem" data-subsystem="vs">VS</button>
+            <div class="value-display" id="vsValue">700</div>
+            <button type="button" class="btn compact-step" data-action="vsDown">◀</button>
+            <input id="vsInput" type="number" value="700" inputmode="numeric" enterkeyhint="done" />
+            <button type="submit" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;border:0;overflow:hidden;clip:rect(0, 0, 0, 0);white-space:nowrap;" aria-hidden="true" tabindex="-1">Submit</button>
+            <button type="button" class="btn compact-step" data-action="vsUp">▶</button>
+          </div>
+        </form>
+
+        <form id="speedForm">
+          <div class="control-card compact-row-control">
+            <button type="button" class="subsystem-toggle compact-toggle" data-action="toggleSubsystem" data-subsystem="spd">SPD</button>
+            <div class="value-display" id="speedValue">250</div>
+            <button type="button" class="btn compact-step" data-action="speedDown">◀</button>
+            <input id="speedInput" type="number" value="250" inputmode="numeric" enterkeyhint="done" />
+            <button type="submit" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;border:0;overflow:hidden;clip:rect(0, 0, 0, 0);white-space:nowrap;" aria-hidden="true" tabindex="-1">Submit</button>
+            <button type="button" class="btn compact-step" data-action="speedUp">▶</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="footer-row">
+        <div class="mode-row selector-row">
+          <button class="mode" data-mode="hdg">HDG</button>
+          <button class="mode" data-mode="nav">NAV</button>
+          <button class="mode" data-mode="apr">APR</button>
+          <span class="mode-separator" aria-hidden="true">|</span>
+          <button class="toggle" data-action="setSpeedMode" data-value="IAS">IAS</button>
+          <button class="toggle" data-action="setSpeedMode" data-value="FLC">FLC</button>
+        </div>
+        <div class="mode-row compact-row">
+          <button class="toggle" data-action="toggleAp">AP</button>
+          <button class="toggle" data-action="toggleFd">FD</button>
+        </div>
+      </section>
+    </main>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,8 @@
+{
+  "label": "probe-ap-state",
+  "type": "shell",
+  "command": "node probe-ap-state.js",
+  "args": [],
+  "isBackground": false,
+  "problemMatcher": []
+}

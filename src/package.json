@@ -1,0 +1,14 @@
+{
+  "name": "fs2024-autopilot-remote-panel",
+  "version": "1.0.0",
+  "description": "Remote autopilot panel prototype for Microsoft Flight Simulator 2024",
+  "main": "server/app.js",
+  "scripts": {
+    "start": "node server/app.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "node-simconnect": "^4.2.0",
+    "socket.io": "^4.1.0"
+  }
+}

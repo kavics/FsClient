@@ -1,0 +1,261 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "probe-simconnect",
+			"type": "shell",
+			"command": "node -e \"console.log('hello')\"",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "probe-simconnect-events",
+			"type": "shell",
+			"command": "node -e \"const { open, Protocol, SimConnectConstants, EventFlag } = require('node-simconnect'); open('REMAP Probe', Protocol.FSX_SP2).then(({ handle }) => { handle.mapClientEventToSimEvent(100, 'AP_ALT_VAR_INC'); handle.mapClientEventToSimEvent(101, 'AP_ALT_VAR_DEC'); handle.addClientEventToNotificationGroup(1, 100, true); handle.addClientEventToNotificationGroup(1, 101, true); handle.transmitClientEvent(SimConnectConstants.OBJECT_ID_USER, 100, 0, 1, EventFlag.EVENT_FLAG_DEFAULT); console.log('sent inc'); setTimeout(() => { handle.transmitClientEvent(SimConnectConstants.OBJECT_ID_USER, 101, 0, 1, EventFlag.EVENT_FLAG_DEFAULT); console.log('sent dec'); setTimeout(() => process.exit(0), 1000); }, 1000); }).catch(err => { console.error(err); process.exit(1); });\"",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "node-hello",
+			"type": "shell",
+			"command": "node hello.js",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "probe-simconnect-using-file",
+			"type": "shell",
+			"command": "node probe.js",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "start-remap-server",
+			"type": "shell",
+			"command": "node server/app.js",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "inspect-port-3000",
+			"type": "shell",
+			"command": "netstat -ano | findstr :3000",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "stop-port-3000",
+			"type": "shell",
+			"command": "taskkill /PID 8556 /F",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "start-remap-server",
+			"type": "shell",
+			"command": "node server/app.js",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "list-sim-input-events",
+			"type": "shell",
+			"command": "node list-events.js",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "start-remap-server",
+			"type": "shell",
+			"command": "node server/app.js",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "probe-sf50-events",
+			"type": "shell",
+			"command": "node probe-sf50.js",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "probe-input-events",
+			"type": "shell",
+			"command": "node probe-input-events.js",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "start-remap-server",
+			"type": "shell",
+			"command": "node server/app.js",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "probe-input-events",
+			"type": "shell",
+			"command": "node probe-input-events.js",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "start-remap-server",
+			"type": "shell",
+			"command": "node server/app.js",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "start-remap-server",
+			"type": "shell",
+			"command": "node server/app.js",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "start-remap-server",
+			"type": "shell",
+			"command": "node server/app.js",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "start-remap-server",
+			"type": "shell",
+			"command": "node server/app.js",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "start-remap-server",
+			"type": "shell",
+			"command": "node server/app.js",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "check-server-syntax",
+			"type": "shell",
+			"command": "node --check server/app.js",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "probe-heading-simvar",
+			"type": "shell",
+			"command": "node probe-heading-simvar.js",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "inspect-port-3000-now",
+			"type": "shell",
+			"command": "netstat -ano | findstr :3000",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "stop-port-3000-now",
+			"type": "shell",
+			"command": "taskkill /PID 9444 /F",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "start-remap-server-fresh",
+			"type": "shell",
+			"command": "node server/app.js",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "start-remap-server-fresh",
+			"type": "shell",
+			"command": "node server/app.js",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "check-server-syntax",
+			"type": "shell",
+			"command": "node --check server/app.js",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "start-remap-server-fresh",
+			"type": "shell",
+			"command": "node server/app.js",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "start-remap-server-fresh",
+			"type": "shell",
+			"command": "node server/app.js",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "check-server-syntax",
+			"type": "shell",
+			"command": "node --check server/app.js",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "stop-port-3000-now",
+			"type": "shell",
+			"command": "taskkill /PID 11752 /F",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "start-remap-server-fresh",
+			"type": "shell",
+			"command": "node server/app.js",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": []
+		},
+		{
+			"label": "probe-ap-state",
+			"type": "shell",
+			"command": "node probe-ap-state.js",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": []
+		}
+	]
+}

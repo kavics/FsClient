@@ -1,0 +1,234 @@
+:root {
+  color-scheme: dark;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: #07111f;
+  color: #f2f7ff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: radial-gradient(circle at top, #10243d 0%, #07111f 60%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+}
+
+.panel-shell {
+  width: min(100%, 386px);
+  background: rgba(7, 17, 31, 0.92);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 24px;
+  padding: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 1rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.status-indicator {
+  font-size: 1.2rem;
+  line-height: 1;
+  color: #fbbf24;
+  margin-right: 2px;
+}
+
+.status-indicator.connected {
+  color: #34d399;
+}
+
+.status-indicator.disconnected {
+  color: #f87171;
+}
+
+.controls {
+  display: grid;
+  gap: 8px;
+}
+
+.control-card {
+  display: block;
+}
+
+.compact-row-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-left: 14px;
+  padding-right: 14px;
+}
+
+.compact-toggle {
+  min-width: 54px;
+  min-height: 36px;
+  padding: 6px 7px;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  border: 1px solid rgba(255,255,255,0.14);
+  transition: all 0.15s ease;
+  margin-right: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.subsystem-toggle {
+  background: linear-gradient(135deg, #243447 0%, #182333 100%);
+  color: #e2e8f0;
+}
+
+.subsystem-toggle.active {
+  background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%);
+  color: #f8fafc;
+  box-shadow: 0 0 0 1px rgba(14,165,233,0.35), 0 4px 10px rgba(14,165,233,0.22);
+}
+
+.subsystem-toggle:not(.active) {
+  border: 0;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+  opacity: 1;
+}
+
+.compact-step {
+  min-width: 36px;
+  padding: 6px 8px;
+}
+
+.compact-set {
+  min-width: 46px;
+  padding: 6px 8px;
+  margin-left: 2px;
+}
+
+.value-display {
+  min-width: 82px;
+  min-height: 36px;
+  padding: 6px 8px;
+  border-radius: 0;
+  background: rgba(56, 189, 248, 0.16);
+  color: #7dd3fc;
+  font-size: 1rem;
+  font-weight: 800;
+  text-align: center;
+  letter-spacing: 0.02em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.subsystem-toggle + .value-display {
+  margin-left: -8px;
+}
+
+.compact-row-control input {
+  flex: 1;
+  max-width: 102px;
+  min-height: 38px;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 10px;
+  padding: 6px 7px;
+  font-size: 1rem;
+  font-weight: 800;
+  background: #0b1728;
+  color: #f8fafc;
+  text-align: center;
+}
+
+.btn,
+.mode,
+.toggle {
+  border: 0;
+  border-radius: 999px;
+  padding: 7px 10px;
+  cursor: pointer;
+  font-weight: 700;
+  color: #e2e8f0;
+  background: linear-gradient(135deg, #243447 0%, #182333 100%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+.btn.set {
+  min-width: 46px;
+  padding: 7px 10px;
+}
+
+.mode-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.footer-row {
+  padding: 8px 14px;
+}
+
+.selector-row {
+  align-items: center;
+}
+
+.mode-separator {
+  color: rgba(148, 163, 184, 0.48);
+  font-weight: 700;
+  padding: 0 4px;
+}
+
+.compact-row {
+  margin-top: 6px;
+}
+
+.compact-row .toggle[data-action="toggleAp"],
+.compact-row .toggle[data-action="toggleFd"] {
+  min-width: 84px;
+  border-radius: 0;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.mode.active,
+.toggle.active,
+.subsystem-toggle.active {
+  background: #38bdf8;
+  color: #07111f;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: rgba(56, 189, 248, 0.2);
+  color: #7dd3fc;
+  font-weight: 700;
+}
+
+@media (max-width: 480px) {
+  body {
+    padding: 6px;
+  }
+
+  .panel-shell {
+    padding: 10px;
+  }
+}
