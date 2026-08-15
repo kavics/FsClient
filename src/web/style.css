@@ -58,11 +58,12 @@ h1 {
   color: #f87171;
 }
 
+section {
+  margin-top: 4;
+}
+
 .aircraft-summary {
-  margin: 2px 0 12px;
   padding: 10px 14px;
-  border-left: 3px solid #38bdf8;
-  background: rgba(56, 189, 248, 0.08);
 }
 
 .aircraft-type {
@@ -78,7 +79,6 @@ h1 {
 .aircraft-details {
   display: flex;
   gap: 18px;
-  margin-top: 5px;
 }
 
 .aircraft-details span {
@@ -223,11 +223,11 @@ h1 {
   display: flex;
   gap: 6px;
   flex-wrap: wrap;
-  margin-top: 8px;
 }
 
 .buttons-row {
   padding: 8px 14px;
+  margin-top: 6px;
 }
 
 .footer-row {
@@ -261,7 +261,7 @@ h1 {
 }
 
 .compact-row {
-  margin-top: 6px;
+  margin-top: 10px;
 }
 
 .compact-row .toggle[data-action="toggleAp"],
