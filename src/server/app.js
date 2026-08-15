@@ -443,6 +443,11 @@ function connectToSim() {
     });
 }
 
+function formatTimestamp(date = new Date()) {
+  const pad = (value) => String(value).padStart(2, '0');
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+}
+
 function broadcastState() {
   io.emit('state', state);
 }
@@ -577,8 +582,9 @@ io.on('connection', (socket) => {
                    'unknown';
   const isLocal = clientIp === '127.0.0.1' || clientIp === '::1' || clientIp === '::ffff:127.0.0.1' || clientIp.startsWith('127.');
   const runLocation = isLocal ? 'LOCAL' : 'REMOTE';
-  
-  console.log(`Client connected from ${clientIp} (${runLocation})`);
+  const timestamp = formatTimestamp();
+
+  console.log(`[${timestamp}] Client connected from ${clientIp} (${runLocation})`);
   
   socket.emit('state', { ...state, runLocation });
 

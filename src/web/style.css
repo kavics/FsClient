@@ -197,6 +197,10 @@ h1 {
   text-align: center;
 }
 
+.compact-row-control input.editing {
+  color: #facc15;
+}
+
 .btn,
 .mode,
 .toggle {

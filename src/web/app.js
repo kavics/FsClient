@@ -256,6 +256,10 @@ Object.entries(fieldConfigs).forEach(([fieldName, field]) => {
   }
 
   if (field.input) {
+    field.input.addEventListener('focus', () => {
+      field.input.classList.add('editing');
+    });
+
     field.input.addEventListener('keydown', (event) => {
       if (event.key === 'Enter' || event.key === 'Done' || event.key === 'Go') {
         event.preventDefault();
@@ -271,6 +275,8 @@ Object.entries(fieldConfigs).forEach(([fieldName, field]) => {
     });
 
     field.input.addEventListener('blur', () => {
+      field.input.classList.remove('editing');
+
       if (field.input.value.trim() !== '') {
         field.input.value = Number(field.input.value);
       }
