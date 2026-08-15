@@ -14,6 +14,9 @@ const headingValueEl = document.getElementById('headingValue');
 const altitudeValueEl = document.getElementById('altitudeValue');
 const vsValueEl = document.getElementById('vsValue');
 const speedValueEl = document.getElementById('speedValue');
+const aircraftTypeEl = document.getElementById('aircraftType');
+const aircraftCallsignEl = document.getElementById('aircraftCallsign');
+const aircraftIdentifierEl = document.getElementById('aircraftIdentifier');
 
 let latestState = null;
 const fieldConfigs = {
@@ -61,6 +64,10 @@ function setChip(id, active) {
 
 function renderState(state) {
   latestState = state;
+
+  if (aircraftTypeEl) aircraftTypeEl.textContent = state.aircraft?.type || 'Unknown aircraft';
+  if (aircraftCallsignEl) aircraftCallsignEl.textContent = state.aircraft?.callsign || 'Unknown callsign';
+  if (aircraftIdentifierEl) aircraftIdentifierEl.textContent = state.aircraft?.identifier || 'Unknown ID';
 
   if (headingInputEl && !isEditing(headingInputEl)) headingInputEl.value = state.heading;
   if (altitudeInputEl && !isEditing(altitudeInputEl)) altitudeInputEl.value = state.altitude;

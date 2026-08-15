@@ -28,6 +28,11 @@ app.get('/remap-panel', (_req, res) => {
 });
 
 const state = {
+  aircraft: {
+    type: 'Unknown aircraft',
+    callsign: 'Unknown callsign',
+    identifier: 'Unknown ID',
+  },
   ap: false,
   fd: false,
   heading: 123,
@@ -50,6 +55,8 @@ let simError = null;
 let simInputEvents = {};
 let simDataRequestId = 100;
 let simDataDefinitionId = 200;
+let simAircraftDataRequestId = 101;
+let simAircraftDataDefinitionId = 204;
 let simHeadingSetDefinitionId = 201;
 let simHeadingValue = 123;
 let simAltitudeSetDefinitionId = 202;
@@ -115,6 +122,17 @@ function sendSimEvent(eventName, data = 0) {
     simHandle.setInputEvent(inputEventHash, data);
   } catch (error) {
     console.warn(`Unable to transmit ${eventName}:`, error.message);
+  }
+}
+
+function supportsSf50InputEvents() {
+  const aircraftType = String(state.aircraft?.type || '').toLowerCase();
+  return aircraftType.includes('sf50') || aircraftType.includes('vision jet');
+}
+
+function sendSf50Event(eventName, data = 0) {
+  if (supportsSf50InputEvents()) {
+    sendSimEvent(eventName, data);
   }
 }
 
@@ -288,6 +306,30 @@ function connectToSim() {
         SimConnectDataType.INT32
       );
       handle.addToDataDefinition(
+        simAircraftDataDefinitionId,
+        'TITLE',
+        '',
+        SimConnectDataType.STRING256
+      );
+      handle.addToDataDefinition(
+        simAircraftDataDefinitionId,
+        'ATC AIRLINE',
+        '',
+        SimConnectDataType.STRING64
+      );
+      handle.addToDataDefinition(
+        simAircraftDataDefinitionId,
+        'ATC FLIGHT NUMBER',
+        '',
+        SimConnectDataType.STRING32
+      );
+      handle.addToDataDefinition(
+        simAircraftDataDefinitionId,
+        'ATC ID',
+        '',
+        SimConnectDataType.STRING32
+      );
+      handle.addToDataDefinition(
         simHeadingSetDefinitionId,
         'AUTOPILOT HEADING LOCK DIR',
         'Degrees',
@@ -310,6 +352,12 @@ function connectToSim() {
         simDataDefinitionId,
         SimConnectConstants.OBJECT_ID_USER,
         SimConnectPeriod.SIM_FRAME
+      );
+      handle.requestDataOnSimObject(
+        simAircraftDataRequestId,
+        simAircraftDataDefinitionId,
+        SimConnectConstants.OBJECT_ID_USER,
+        SimConnectPeriod.SECOND
       );
 
       mapSimClientEvents();
@@ -356,6 +404,21 @@ function connectToSim() {
               hdg: headingActive,
             });
           }
+        }
+        if (recvSimObjectData.requestID === simAircraftDataRequestId) {
+          const type = recvSimObjectData.data.readString256().trim();
+          const airline = recvSimObjectData.data.readString64().trim();
+          const flightNumber = recvSimObjectData.data.readString32().trim();
+          const identifier = recvSimObjectData.data.readString32().trim();
+          const callsign = [airline, flightNumber].filter(Boolean).join(' ');
+
+          updateState({
+            aircraft: {
+              type: type || 'Unknown aircraft',
+              callsign: callsign || 'Unknown callsign',
+              identifier: identifier || 'Unknown ID',
+            },
+          });
         }
       });
 
