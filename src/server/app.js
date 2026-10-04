@@ -63,6 +63,8 @@ let simAltitudeSetDefinitionId = 202;
 let simAltitudeValue = 12000;
 let simVsSetDefinitionId = 203;
 let simVsValue = 700;
+let simSpeedSetDefinitionId = 205;
+let simSpeedValue = 250;
 let simClientEvents = {};
 
 const SIM_EVENT_GROUP_ID = 1;
@@ -237,6 +239,25 @@ function setSimVerticalSpeed(targetVerticalSpeed) {
   }
 }
 
+function setSimSpeed(targetSpeed) {
+  if (!simConnected || !simHandle) {
+    return;
+  }
+
+  const buffer = new RawBuffer(8);
+  buffer.writeFloat64(targetSpeed);
+
+  try {
+    simHandle.setDataOnSimObject(simSpeedSetDefinitionId, SimConnectConstants.OBJECT_ID_USER, {
+      buffer,
+      arrayCount: 0,
+      tagged: false,
+    });
+  } catch (error) {
+    console.warn('Unable to set AUTOPILOT AIRSPEED HOLD VAR:', error.message);
+  }
+}
+
 function connectToSim() {
   open('REMAP Controller', Protocol.SunRise)
     .then(({ recvOpen, handle }) => {
@@ -261,6 +282,12 @@ function connectToSim() {
         simDataDefinitionId,
         'AUTOPILOT VERTICAL HOLD VAR',
         'feet per minute',
+        SimConnectDataType.FLOAT64
+      );
+      handle.addToDataDefinition(
+        simDataDefinitionId,
+        'AUTOPILOT AIRSPEED HOLD VAR',
+        'knots',
         SimConnectDataType.FLOAT64
       );
       handle.addToDataDefinition(
@@ -347,6 +374,12 @@ function connectToSim() {
         'feet per minute',
         SimConnectDataType.FLOAT64
       );
+      handle.addToDataDefinition(
+        simSpeedSetDefinitionId,
+        'AUTOPILOT AIRSPEED HOLD VAR',
+        'knots',
+        SimConnectDataType.FLOAT64
+      );
       handle.requestDataOnSimObject(
         simDataRequestId,
         simDataDefinitionId,
@@ -383,6 +416,7 @@ function connectToSim() {
           simHeadingValue = normalizeHeading(recvSimObjectData.data.readFloat64());
           simAltitudeValue = Math.round(recvSimObjectData.data.readFloat64());
           simVsValue = Math.round(recvSimObjectData.data.readFloat64());
+          simSpeedValue = Math.round(recvSimObjectData.data.readFloat64());
           const apMaster = recvSimObjectData.data.readInt32() === 1;
           const fdActive = recvSimObjectData.data.readInt32() === 1;
           const headingActive = recvSimObjectData.data.readInt32() === 1;
@@ -397,6 +431,7 @@ function connectToSim() {
               heading: simHeadingValue,
               altitude: Number.isFinite(simAltitudeValue) ? simAltitudeValue : state.altitude,
               vs: Number.isFinite(simVsValue) ? simVsValue : state.vs,
+              selectedSpeed: Number.isFinite(simSpeedValue) ? simSpeedValue : state.selectedSpeed,
               headingActive,
               altitudeActive,
               vsActive,
@@ -482,6 +517,14 @@ function handleSimControl(action, payload = {}) {
       if (Number.isFinite(targetVs)) {
         simVsValue = targetVs;
         setSimVerticalSpeed(targetVs);
+      }
+      break;
+    }
+    case 'setSpeed': {
+      const targetSpeed = Math.round(Number(payload.value || 0));
+      if (Number.isFinite(targetSpeed)) {
+        simSpeedValue = targetSpeed;
+        setSimSpeed(targetSpeed);
       }
       break;
     }
