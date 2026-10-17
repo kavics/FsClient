@@ -73,10 +73,14 @@ function renderState(state) {
   if (altitudeInputEl && !isEditing(altitudeInputEl)) altitudeInputEl.value = state.altitude;
   if (vsInputEl && !isEditing(vsInputEl)) vsInputEl.value = state.vs;
   if (speedInputEl && !isEditing(speedInputEl)) speedInputEl.value = state.selectedSpeed;
-  if (headingValueEl) headingValueEl.textContent = state.heading;
-  if (altitudeValueEl) altitudeValueEl.textContent = state.altitude;
-  if (vsValueEl) vsValueEl.textContent = state.vs;
-  if (speedValueEl) speedValueEl.textContent = state.selectedSpeed;
+  Object.values(fieldConfigs).forEach((field) => {
+    if (!field.valueEl) {
+      return;
+    }
+
+    const displayStateKey = field.valueEl.dataset.displayStateKey || field.stateKey;
+    field.valueEl.textContent = state[displayStateKey] ?? '--';
+  });
 
   setChip('apChip', state.ap);
   setChip('fdChip', state.fd);
@@ -159,7 +163,7 @@ function submitFieldInput(fieldName) {
 
   enterSubmittedFields.add(fieldName);
   field.input.value = value;
-  if (field.valueEl) {
+  if (field.valueEl && !field.valueEl.dataset.displayStateKey) {
     field.valueEl.textContent = value;
   }
   if (latestState) {

@@ -43,6 +43,10 @@ const state = {
   altitude: 12000,
   vs: 700,
   selectedSpeed: 250,
+  currentHeading: null,
+  currentAltitude: null,
+  currentVs: null,
+  currentSpeed: null,
   headingActive: false,
   altitudeActive: false,
   vsActive: false,
@@ -302,6 +306,30 @@ function connectToSim() {
       );
       handle.addToDataDefinition(
         simDataDefinitionId,
+        'PLANE HEADING DEGREES MAGNETIC',
+        'Degrees',
+        SimConnectDataType.FLOAT64
+      );
+      handle.addToDataDefinition(
+        simDataDefinitionId,
+        'PLANE ALTITUDE',
+        'feet',
+        SimConnectDataType.FLOAT64
+      );
+      handle.addToDataDefinition(
+        simDataDefinitionId,
+        'VERTICAL SPEED',
+        'feet per minute',
+        SimConnectDataType.FLOAT64
+      );
+      handle.addToDataDefinition(
+        simDataDefinitionId,
+        'AIRSPEED INDICATED',
+        'knots',
+        SimConnectDataType.FLOAT64
+      );
+      handle.addToDataDefinition(
+        simDataDefinitionId,
         'AUTOPILOT MASTER',
         'Bool',
         SimConnectDataType.INT32
@@ -427,6 +455,18 @@ function connectToSim() {
           simAltitudeValue = Math.round(recvSimObjectData.data.readFloat64());
           simVsValue = Math.round(recvSimObjectData.data.readFloat64());
           simSpeedValue = Math.round(recvSimObjectData.data.readFloat64());
+          const currentHeadingValue = recvSimObjectData.data.readFloat64();
+          const currentAltitudeValue = recvSimObjectData.data.readFloat64();
+          const currentVsValue = recvSimObjectData.data.readFloat64();
+          const currentSpeedValue = recvSimObjectData.data.readFloat64();
+          const currentHeading = Number.isFinite(currentHeadingValue)
+            ? normalizeHeading(currentHeadingValue)
+            : state.currentHeading;
+          const currentAltitude = Number.isFinite(currentAltitudeValue)
+            ? Math.round(currentAltitudeValue)
+            : state.currentAltitude;
+          const currentVs = Number.isFinite(currentVsValue) ? Math.round(currentVsValue) : state.currentVs;
+          const currentSpeed = Number.isFinite(currentSpeedValue) ? Math.round(currentSpeedValue) : state.currentSpeed;
           const apMaster = recvSimObjectData.data.readInt32() === 1;
           const fdActive = recvSimObjectData.data.readInt32() === 1;
           const headingActive = recvSimObjectData.data.readInt32() === 1;
@@ -442,6 +482,10 @@ function connectToSim() {
               altitude: Number.isFinite(simAltitudeValue) ? simAltitudeValue : state.altitude,
               vs: Number.isFinite(simVsValue) ? simVsValue : state.vs,
               selectedSpeed: Number.isFinite(simSpeedValue) ? simSpeedValue : state.selectedSpeed,
+              currentHeading,
+              currentAltitude,
+              currentVs,
+              currentSpeed,
               headingActive,
               altitudeActive,
               vsActive,
