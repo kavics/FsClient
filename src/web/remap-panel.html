@@ -76,6 +76,16 @@
         </div>
       </section>
 
+      <section class="target-distance" aria-label="Target airport distance">
+        <form id="targetAirportForm" class="target-distance-row">
+          <label class="subsystem-toggle compact-toggle target-distance-label" for="targetAirportInput">DIST</label>
+          <input id="targetAirportInput" class="target-distance-field" type="text" maxlength="4" placeholder="ICAO" autocomplete="off" autocapitalize="characters" aria-label="Target airport ICAO code" />
+          <input id="targetDistanceOutput" class="target-distance-field" type="text" value="-- NM" readonly aria-label="Straight-line distance to target airport" />
+          <input id="requiredVsOutput" class="target-distance-field" type="text" value="-- FPM" readonly aria-label="Required vertical speed to reach selected altitude at target" />
+        </form>
+        <div id="targetAirportStatus" class="target-distance-status" aria-live="polite"></div>
+      </section>
+
       <section class="aircraft-summary" aria-label="Aircraft information">
         <div class="aircraft-type" id="aircraftType">Unknown aircraft</div>
         <div class="aircraft-details">

@@ -17,8 +17,15 @@ const speedValueEl = document.getElementById('speedValue');
 const aircraftTypeEl = document.getElementById('aircraftType');
 const aircraftCallsignEl = document.getElementById('aircraftCallsign');
 const aircraftIdentifierEl = document.getElementById('aircraftIdentifier');
+const targetAirportFormEl = document.getElementById('targetAirportForm');
+const targetAirportInputEl = document.getElementById('targetAirportInput');
+const targetDistanceOutputEl = document.getElementById('targetDistanceOutput');
+const requiredVsOutputEl = document.getElementById('requiredVsOutput');
+const targetAirportStatusEl = document.getElementById('targetAirportStatus');
 
 let latestState = null;
+let targetAirportPending = false;
+let targetAirportHasError = false;
 const fieldConfigs = {
   heading: {
     input: headingInputEl,
@@ -62,12 +69,39 @@ function setChip(id, active) {
   }
 }
 
+function renderTargetDistance(state) {
+  if (!targetAirportInputEl) {
+    return;
+  }
+  const targetMatchesInput = state.targetAirport?.icao === targetAirportInputEl.value.trim().toUpperCase();
+  if (targetDistanceOutputEl) {
+    targetDistanceOutputEl.value = targetMatchesInput && Number.isFinite(state.targetDistanceNm)
+      ? `${state.targetDistanceNm.toFixed(1)} NM`
+      : '-- NM';
+  }
+  if (requiredVsOutputEl) {
+    const requiredVsFpm = state.requiredVsFpm;
+    requiredVsOutputEl.value = targetMatchesInput && Number.isFinite(requiredVsFpm)
+      ? `${requiredVsFpm > 0 ? '+' : ''}${requiredVsFpm} FPM`
+      : '-- FPM';
+  }
+  if (targetAirportStatusEl && targetMatchesInput && state.targetAirport) {
+    targetAirportStatusEl.textContent = [state.targetAirport.icao, state.targetAirport.name]
+      .filter(Boolean)
+      .join(' · ');
+  }
+}
+
 function renderState(state) {
   latestState = state;
 
   if (aircraftTypeEl) aircraftTypeEl.textContent = state.aircraft?.type || 'Unknown aircraft';
   if (aircraftCallsignEl) aircraftCallsignEl.textContent = state.aircraft?.callsign || 'Unknown callsign';
   if (aircraftIdentifierEl) aircraftIdentifierEl.textContent = state.aircraft?.identifier || 'Unknown ID';
+  if (targetAirportInputEl && !isEditing(targetAirportInputEl) && !targetAirportPending && !targetAirportHasError) {
+    targetAirportInputEl.value = state.targetAirport?.icao || '';
+  }
+  renderTargetDistance(state);
 
   if (headingInputEl && !isEditing(headingInputEl)) headingInputEl.value = state.heading;
   if (altitudeInputEl && !isEditing(altitudeInputEl)) altitudeInputEl.value = state.altitude;
@@ -77,7 +111,6 @@ function renderState(state) {
     if (!field.valueEl) {
       return;
     }
-
     const displayStateKey = field.valueEl.dataset.displayStateKey || field.stateKey;
     field.valueEl.textContent = state[displayStateKey] ?? '--';
   });
@@ -146,6 +179,54 @@ socket.on('state', (state) => {
   }
   renderState(state);
 });
+
+if (targetAirportFormEl && targetAirportInputEl) {
+  targetAirportInputEl.addEventListener('input', () => {
+    targetAirportHasError = false;
+    if (targetAirportStatusEl) targetAirportStatusEl.textContent = '';
+    if (targetDistanceOutputEl) targetDistanceOutputEl.value = '-- NM';
+    if (requiredVsOutputEl) requiredVsOutputEl.value = '-- FPM';
+  });
+
+  function submitTargetAirport() {
+    if (targetAirportPending) {
+      return;
+    }
+
+    const code = targetAirportInputEl.value.trim().toUpperCase();
+    targetAirportInputEl.value = code;
+    const currentCode = latestState?.targetAirport?.icao || '';
+    if (code === currentCode && !targetAirportHasError) {
+      if (latestState) {
+        renderTargetDistance(latestState);
+      }
+      return;
+    }
+
+    targetAirportPending = true;
+    targetAirportHasError = false;
+    if (targetDistanceOutputEl) targetDistanceOutputEl.value = '-- NM';
+    if (requiredVsOutputEl) requiredVsOutputEl.value = '-- FPM';
+    if (targetAirportStatusEl) targetAirportStatusEl.textContent = code ? 'Reptér keresése…' : '';
+
+    socket.emit('targetAirport:set', { code }, (response) => {
+      targetAirportPending = false;
+      targetAirportHasError = !response?.ok;
+      if (targetAirportHasError && targetAirportStatusEl) {
+        targetAirportStatusEl.textContent = response?.error || 'Nem sikerült beállítani a célrepülőteret.';
+      } else if (latestState) {
+        renderTargetDistance(latestState);
+      }
+    });
+  }
+
+  targetAirportFormEl.addEventListener('submit', (event) => {
+    event.preventDefault();
+    submitTargetAirport();
+  });
+
+  targetAirportInputEl.addEventListener('blur', submitTargetAirport);
+}
 
 function submitFieldInput(fieldName) {
   const field = fieldConfigs[fieldName];

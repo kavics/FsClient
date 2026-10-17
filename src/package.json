@@ -5,7 +5,7 @@
   "main": "server/app.js",
   "scripts": {
     "start": "node server/app.js",
-    "test": "node --test server/saved-positions/*.test.js"
+    "test": "node --test server/*.test.js server/saved-positions/*.test.js"
   },
   "engines": {
     "node": ">=24.19.0"

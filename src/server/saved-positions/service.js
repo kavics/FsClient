@@ -243,6 +243,9 @@ function createSavedPositionsFeature(io, { dataDirectory, getAircraftTitle }) {
     detach() {
       adapter.detach();
     },
+    findAirportByCode(code) {
+      return airportCatalog.findByCode(code);
+    },
     attach(handle) {
       adapter.attach(handle);
     },

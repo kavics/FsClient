@@ -237,6 +237,12 @@ project/
 
 A GUI-ban egyelőre **IAS** felirat jelenik meg.
 
+## Célrepülőtér távolsága
+
+A REMAP panelen négybetűs ICAO-kóddal adható meg a célrepülőtér. A panel a repülőgép aktuális koordinátáiból és a repülőtér adatbázisában szereplő koordinátákból légvonalbeli távolságot számít NM-ben.
+
+A számított vertikális sebesség azt mutatja, hogy a kiválasztott ALT célmagasság eléréséhez mekkora emelkedési vagy süllyedési sebesség szükséges a célrepülőtérig hátralévő légvonalbeli idő alatt. A becslés az aktuális földsebességgel számol, és nem veszi figyelembe a repülési terv útvonalát, a szél változását vagy az eljárási magasságkorlátozásokat.
+
 ---
 
 ## Autopilot módok
