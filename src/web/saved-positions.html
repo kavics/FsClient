@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Saved positions | FS2024 Client</title>
+    <link rel="stylesheet" href="/saved-positions.css" />
+  </head>
+  <body>
+    <header class="masthead">
+      <a class="back-link" href="/" aria-label="Back to home">&larr; Home</a>
+      <div class="masthead-title">
+        <span class="eyebrow">FLIGHT OPERATIONS / MEMORY</span>
+        <h1>Saved positions</h1>
+      </div>
+      <div class="connection" id="connection" data-state="unknown">
+        <span class="connection-dot" aria-hidden="true"></span>
+        <span id="connection-label">Connecting</span>
+      </div>
+    </header>
+
+    <main>
+      <section class="aircraft-strip" aria-live="polite">
+        <span class="eyebrow">ACTIVE AIRCRAFT</span>
+        <strong id="aircraft-title">Waiting for simulator</strong>
+        <span class="strip-meta" id="sample-time">Simulator data unavailable</span>
+      </section>
+
+      <div class="workspace">
+        <section class="capture-column" aria-labelledby="capture-title">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">CAPTURE</span>
+              <h2 id="capture-title">Parked aircraft</h2>
+            </div>
+            <span class="section-index">01</span>
+          </div>
+
+          <div class="conditions" id="conditions" aria-live="polite"></div>
+
+          <form id="save-form" class="form-panel">
+            <label class="field-label" for="label">Position name <span class="required">Required</span></label>
+            <input id="label" name="label" maxlength="120" placeholder="e.g. Hangar apron at sunset" required />
+
+            <div class="field-heading">
+              <span class="field-label">Airport suggestion</span>
+              <button type="button" class="text-button" id="clear-airport">Clear details</button>
+            </div>
+            <div class="airport-fields">
+              <label><span>ICAO</span><input id="airport-icao" maxlength="8" autocomplete="off" /></label>
+              <label><span>Airport</span><input id="airport-name" maxlength="200" autocomplete="off" /></label>
+              <label><span>City</span><input id="airport-city" maxlength="120" autocomplete="off" /></label>
+              <label><span>Country</span><input id="airport-country" maxlength="120" autocomplete="off" /></label>
+            </div>
+            <div class="candidate-list" id="airport-candidates" aria-live="polite"></div>
+
+            <label class="field-label" for="note">Note <span class="optional">Optional</span></label>
+            <textarea id="note" name="note" maxlength="2000" rows="3" placeholder="A detail worth remembering"></textarea>
+
+            <button class="primary-button" id="save-button" type="submit" disabled>Save current position</button>
+          </form>
+        </section>
+
+        <section class="library-column" aria-labelledby="library-title">
+          <div class="section-heading library-heading">
+            <div>
+              <span class="eyebrow">LIBRARY</span>
+              <h2 id="library-title">Saved for this aircraft <span id="position-count">0</span></h2>
+            </div>
+            <div class="library-actions">
+              <button class="quiet-button" id="export-button" type="button">Export JSON</button>
+              <label class="quiet-button file-button" for="import-file">Import JSON</label>
+              <input id="import-file" type="file" accept="application/json,.json" hidden />
+            </div>
+          </div>
+
+          <div class="library-grid">
+            <div class="position-list" id="position-list" aria-live="polite"></div>
+            <section class="position-detail" id="position-detail" aria-live="polite" aria-label="Selected saved position">
+              <div class="empty-detail">
+                <span class="detail-mark" aria-hidden="true">--</span>
+                <p>Select a saved position to inspect it.</p>
+              </div>
+            </section>
+          </div>
+
+          <section class="import-preview" id="import-preview" hidden aria-labelledby="import-title">
+            <div class="section-heading">
+              <div>
+                <span class="eyebrow">PORTABLE ARCHIVE</span>
+                <h3 id="import-title">Import preview</h3>
+              </div>
+              <button class="text-button" id="cancel-import" type="button">Cancel</button>
+            </div>
+            <p id="import-summary"></p>
+            <div id="import-invalid" class="import-invalid"></div>
+            <div id="import-conflicts" class="import-conflicts"></div>
+            <button class="primary-button" id="confirm-import" type="button">Confirm import</button>
+          </section>
+        </section>
+      </div>
+
+      <div class="notice" id="notice" role="status" aria-live="polite"></div>
+    </main>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/saved-positions.js"></script>
+  </body>
+</html>

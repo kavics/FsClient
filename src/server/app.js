@@ -11,6 +11,7 @@ const {
   SimConnectPeriod,
   EventFlag,
 } = require('node-simconnect');
+const { createSavedPositionsFeature } = require('./saved-positions/service');
 
 const app = express();
 const server = http.createServer(app);
@@ -25,6 +26,9 @@ app.get('/', (_req, res) => {
 });
 app.get('/remap-panel', (_req, res) => {
   res.sendFile(path.join(webDir, 'remap-panel.html'));
+});
+app.get('/saved-positions', (_req, res) => {
+  res.sendFile(path.join(webDir, 'saved-positions.html'));
 });
 
 const state = {
@@ -48,6 +52,11 @@ const state = {
   apr: false,
   speedMode: 'IAS'
 };
+
+const savedPositionsFeature = createSavedPositionsFeature(io, {
+  dataDirectory: path.join(__dirname, 'data'),
+  getAircraftTitle: () => state.aircraft?.type,
+});
 
 let simHandle = null;
 let simConnected = false;
@@ -265,6 +274,7 @@ function connectToSim() {
       simConnected = true;
       simError = null;
       console.log(`Connected to SimConnect: ${recvOpen.applicationName}`);
+      savedPositionsFeature.attach(handle);
 
       handle.addToDataDefinition(
         simDataDefinitionId,
@@ -463,16 +473,19 @@ function connectToSim() {
 
       handle.on('quit', () => {
         simConnected = false;
+        savedPositionsFeature.detach();
         console.log('SimConnect closed by simulator');
       });
 
       handle.on('close', () => {
         simConnected = false;
+        savedPositionsFeature.detach();
         console.log('SimConnect connection closed');
       });
     })
     .catch((error) => {
       simConnected = false;
+      savedPositionsFeature.detach();
       simError = error.message;
       console.warn('SimConnect connection failed:', error.message);
     });
@@ -728,3 +741,5 @@ server.listen(PORT, () => {
     console.log(`SimConnect status: waiting for FS2024 (${simError || 'no connection yet'})`);
   }
 });
+
+server.on('close', () => savedPositionsFeature.close());
