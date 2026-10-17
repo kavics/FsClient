@@ -28,6 +28,11 @@ class AirportCatalog {
       }));
   }
 
+  async findByCode(code) {
+    await this.load();
+    return this.airports.find((airport) => airport.place.icao === code) || null;
+  }
+
   async load() {
     if (this.airports) {
       return;

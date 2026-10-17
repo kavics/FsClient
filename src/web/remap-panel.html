@@ -19,7 +19,7 @@
         <form id="headingForm">
           <div class="control-card compact-row-control">
             <button type="button" class="subsystem-toggle compact-toggle" data-action="toggleSubsystem" data-subsystem="hdg">HDG</button>
-            <div class="value-display" id="headingValue">123</div>
+            <div class="value-display" id="headingValue" data-display-state-key="currentHeading">--</div>
             <button type="button" class="btn compact-step" data-action="headingDown">◀</button>
             <input id="headingInput" type="number" value="123" inputmode="numeric" enterkeyhint="done" />
             <button type="submit" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;border:0;overflow:hidden;clip:rect(0, 0, 0, 0);white-space:nowrap;" aria-hidden="true" tabindex="-1">Submit</button>
@@ -30,7 +30,7 @@
         <form id="altitudeForm">
           <div class="control-card compact-row-control">
             <button type="button" class="subsystem-toggle compact-toggle" data-action="toggleSubsystem" data-subsystem="alt">ALT</button>
-            <div class="value-display" id="altitudeValue">12000</div>
+            <div class="value-display" id="altitudeValue" data-display-state-key="currentAltitude">--</div>
             <button type="button" class="btn compact-step" data-action="altitudeDown">◀</button>
             <input id="altitudeInput" type="number" value="12000" inputmode="numeric" enterkeyhint="done" />
             <button type="submit" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;border:0;overflow:hidden;clip:rect(0, 0, 0, 0);white-space:nowrap;" aria-hidden="true" tabindex="-1">Submit</button>
@@ -41,7 +41,7 @@
         <form id="vsForm">
           <div class="control-card compact-row-control">
             <button type="button" class="subsystem-toggle compact-toggle" data-action="toggleSubsystem" data-subsystem="vs">VS</button>
-            <div class="value-display" id="vsValue">700</div>
+            <div class="value-display" id="vsValue" data-display-state-key="currentVs">--</div>
             <button type="button" class="btn compact-step" data-action="vsDown">◀</button>
             <input id="vsInput" type="number" value="700" inputmode="numeric" enterkeyhint="done" />
             <button type="submit" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;border:0;overflow:hidden;clip:rect(0, 0, 0, 0);white-space:nowrap;" aria-hidden="true" tabindex="-1">Submit</button>
@@ -52,7 +52,7 @@
         <form id="speedForm">
           <div class="control-card compact-row-control">
             <button type="button" class="subsystem-toggle compact-toggle" data-action="toggleSubsystem" data-subsystem="spd">SPD</button>
-            <div class="value-display" id="speedValue">250</div>
+            <div class="value-display" id="speedValue" data-display-state-key="currentSpeed">--</div>
             <button type="button" class="btn compact-step" data-action="speedDown">◀</button>
             <input id="speedInput" type="number" value="250" inputmode="numeric" enterkeyhint="done" />
             <button type="submit" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;border:0;overflow:hidden;clip:rect(0, 0, 0, 0);white-space:nowrap;" aria-hidden="true" tabindex="-1">Submit</button>
@@ -74,6 +74,16 @@
           <button class="toggle" data-action="toggleAp">AP</button>
           <button class="toggle" data-action="toggleFd">FD</button>
         </div>
+      </section>
+
+      <section class="target-distance" aria-label="Target airport distance">
+        <form id="targetAirportForm" class="target-distance-row">
+          <label class="subsystem-toggle compact-toggle target-distance-label" for="targetAirportInput">DIST</label>
+          <input id="targetAirportInput" class="target-distance-field" type="text" maxlength="4" placeholder="ICAO" autocomplete="off" autocapitalize="characters" aria-label="Target airport ICAO code" />
+          <input id="targetDistanceOutput" class="target-distance-field" type="text" value="-- NM" readonly aria-label="Straight-line distance to target airport" />
+          <input id="requiredVsOutput" class="target-distance-field" type="text" value="-- FPM" readonly aria-label="Required vertical speed to reach selected altitude at target" />
+        </form>
+        <div id="targetAirportStatus" class="target-distance-status" aria-live="polite"></div>
       </section>
 
       <section class="aircraft-summary" aria-label="Aircraft information">

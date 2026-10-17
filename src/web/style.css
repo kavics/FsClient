@@ -58,6 +58,53 @@ h1 {
   color: #f87171;
 }
 
+.target-distance {
+  margin: 8px 0 10px;
+}
+
+.target-distance-row {
+  display: grid;
+  grid-template-columns: 54px minmax(40px, 0.6fr) minmax(120px, 1.4fr) minmax(68px, 1fr);
+  align-items: center;
+  gap: 6px;
+  padding: 0 4px;
+}
+
+.target-distance-label {
+  justify-self: start;
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.target-distance-field {
+  width: 100%;
+  min-width: 0;
+  min-height: 34px;
+  padding: 5px 4px;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 8px;
+  background: #0b1728;
+  color: #e2e8f0;
+  font-size: 0.85rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.target-distance-field[readonly] {
+  background: rgba(56, 189, 248, 0.12);
+  color: #7dd3fc;
+}
+
+.target-distance-status {
+  min-height: 14px;
+  padding: 3px 6px 0;
+  overflow: hidden;
+  color: #94a3b8;
+  font-size: 0.62rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 section {
   margin-top: 4;
 }
@@ -299,5 +346,18 @@ section {
 
   .panel-shell {
     padding: 10px;
+  }
+
+  .target-distance-row {
+    grid-template-columns: 54px minmax(40px, 0.6fr) minmax(116px, 1.4fr) minmax(68px, 1fr);
+    gap: 4px;
+    padding: 0;
+  }
+}
+
+@media (max-width: 360px) {
+  .target-distance-row {
+    grid-template-columns: 54px minmax(34px, 0.6fr) minmax(116px, 1.4fr) minmax(64px, 1fr);
+    gap: 3px;
   }
 }

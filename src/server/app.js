@@ -12,6 +12,7 @@ const {
   EventFlag,
 } = require('node-simconnect');
 const { createSavedPositionsFeature } = require('./saved-positions/service');
+const { calculateRequiredVerticalSpeed, greatCircleDistanceNm } = require('./navigation');
 
 const app = express();
 const server = http.createServer(app);
@@ -43,6 +44,16 @@ const state = {
   altitude: 12000,
   vs: 700,
   selectedSpeed: 250,
+  currentHeading: null,
+  currentAltitude: null,
+  currentVs: null,
+  currentSpeed: null,
+  currentLatitude: null,
+  currentLongitude: null,
+  groundSpeedKnots: null,
+  targetAirport: null,
+  targetDistanceNm: null,
+  requiredVsFpm: null,
   headingActive: false,
   altitudeActive: false,
   vsActive: false,
@@ -75,6 +86,8 @@ let simVsValue = 700;
 let simSpeedSetDefinitionId = 205;
 let simSpeedValue = 250;
 let simClientEvents = {};
+let targetAirportCoordinates = null;
+let targetAirportLookupId = 0;
 
 const SIM_EVENT_GROUP_ID = 1;
 const SIM_EVENT_ID_BASE = 1000;
@@ -302,6 +315,48 @@ function connectToSim() {
       );
       handle.addToDataDefinition(
         simDataDefinitionId,
+        'PLANE HEADING DEGREES MAGNETIC',
+        'Degrees',
+        SimConnectDataType.FLOAT64
+      );
+      handle.addToDataDefinition(
+        simDataDefinitionId,
+        'PLANE ALTITUDE',
+        'feet',
+        SimConnectDataType.FLOAT64
+      );
+      handle.addToDataDefinition(
+        simDataDefinitionId,
+        'VERTICAL SPEED',
+        'feet per minute',
+        SimConnectDataType.FLOAT64
+      );
+      handle.addToDataDefinition(
+        simDataDefinitionId,
+        'AIRSPEED INDICATED',
+        'knots',
+        SimConnectDataType.FLOAT64
+      );
+      handle.addToDataDefinition(
+        simDataDefinitionId,
+        'PLANE LATITUDE',
+        'degrees',
+        SimConnectDataType.FLOAT64
+      );
+      handle.addToDataDefinition(
+        simDataDefinitionId,
+        'PLANE LONGITUDE',
+        'degrees',
+        SimConnectDataType.FLOAT64
+      );
+      handle.addToDataDefinition(
+        simDataDefinitionId,
+        'GROUND VELOCITY',
+        'knots',
+        SimConnectDataType.FLOAT64
+      );
+      handle.addToDataDefinition(
+        simDataDefinitionId,
         'AUTOPILOT MASTER',
         'Bool',
         SimConnectDataType.INT32
@@ -427,6 +482,21 @@ function connectToSim() {
           simAltitudeValue = Math.round(recvSimObjectData.data.readFloat64());
           simVsValue = Math.round(recvSimObjectData.data.readFloat64());
           simSpeedValue = Math.round(recvSimObjectData.data.readFloat64());
+          const currentHeadingValue = recvSimObjectData.data.readFloat64();
+          const currentAltitudeValue = recvSimObjectData.data.readFloat64();
+          const currentVsValue = recvSimObjectData.data.readFloat64();
+          const currentSpeedValue = recvSimObjectData.data.readFloat64();
+          const currentLatitude = recvSimObjectData.data.readFloat64();
+          const currentLongitude = recvSimObjectData.data.readFloat64();
+          const groundSpeedKnots = recvSimObjectData.data.readFloat64();
+          const currentHeading = Number.isFinite(currentHeadingValue)
+            ? normalizeHeading(currentHeadingValue)
+            : state.currentHeading;
+          const currentAltitude = Number.isFinite(currentAltitudeValue)
+            ? Math.round(currentAltitudeValue)
+            : state.currentAltitude;
+          const currentVs = Number.isFinite(currentVsValue) ? Math.round(currentVsValue) : state.currentVs;
+          const currentSpeed = Number.isFinite(currentSpeedValue) ? Math.round(currentSpeedValue) : state.currentSpeed;
           const apMaster = recvSimObjectData.data.readInt32() === 1;
           const fdActive = recvSimObjectData.data.readInt32() === 1;
           const headingActive = recvSimObjectData.data.readInt32() === 1;
@@ -442,6 +512,13 @@ function connectToSim() {
               altitude: Number.isFinite(simAltitudeValue) ? simAltitudeValue : state.altitude,
               vs: Number.isFinite(simVsValue) ? simVsValue : state.vs,
               selectedSpeed: Number.isFinite(simSpeedValue) ? simSpeedValue : state.selectedSpeed,
+              currentHeading,
+              currentAltitude,
+              currentVs,
+              currentSpeed,
+              currentLatitude,
+              currentLongitude,
+              groundSpeedKnots,
               headingActive,
               altitudeActive,
               vsActive,
@@ -474,12 +551,14 @@ function connectToSim() {
       handle.on('quit', () => {
         simConnected = false;
         savedPositionsFeature.detach();
+        updateState({ currentLatitude: null, currentLongitude: null, groundSpeedKnots: null });
         console.log('SimConnect closed by simulator');
       });
 
       handle.on('close', () => {
         simConnected = false;
         savedPositionsFeature.detach();
+        updateState({ currentLatitude: null, currentLongitude: null, groundSpeedKnots: null });
         console.log('SimConnect connection closed');
       });
     })
@@ -502,6 +581,25 @@ function broadcastState() {
 
 function updateState(patch) {
   Object.assign(state, patch);
+  const targetDistanceNm = targetAirportCoordinates
+    && Number.isFinite(state.currentLatitude)
+    && Number.isFinite(state.currentLongitude)
+    ? greatCircleDistanceNm(
+      state.currentLatitude,
+      state.currentLongitude,
+      targetAirportCoordinates.latitude,
+      targetAirportCoordinates.longitude
+    )
+    : null;
+  state.targetDistanceNm = targetDistanceNm;
+  state.requiredVsFpm = targetDistanceNm === null
+    ? null
+    : calculateRequiredVerticalSpeed(
+      targetDistanceNm,
+      state.groundSpeedKnots,
+      state.currentAltitude,
+      state.altitude
+    );
   broadcastState();
 }
 
@@ -643,6 +741,48 @@ io.on('connection', (socket) => {
   console.log(`[${timestamp}] Client connected from ${clientIp} (${runLocation})`);
   
   socket.emit('state', { ...state, runLocation });
+
+  socket.on('targetAirport:set', async (payload = {}, acknowledge = () => {}) => {
+    const lookupId = ++targetAirportLookupId;
+    const code = typeof payload.code === 'string' ? payload.code.trim().toUpperCase() : '';
+    if (!code) {
+      targetAirportCoordinates = null;
+      updateState({ targetAirport: null });
+      acknowledge({ ok: true });
+      return;
+    }
+    if (!/^[A-Z]{4}$/.test(code)) {
+      acknowledge({ ok: false, error: 'Adj meg egy érvényes, négybetűs ICAO kódot.' });
+      return;
+    }
+
+    try {
+      const airport = await savedPositionsFeature.findAirportByCode(code);
+      if (lookupId !== targetAirportLookupId) {
+        acknowledge({ ok: false, error: 'A reptérkeresést egy újabb kérés felülírta.' });
+        return;
+      }
+      if (!airport) {
+        acknowledge({ ok: false, error: `Nem található reptér ezzel az ICAO kóddal: ${code}.` });
+        return;
+      }
+
+      targetAirportCoordinates = {
+        latitude: airport.latitude,
+        longitude: airport.longitude,
+      };
+      updateState({
+        targetAirport: {
+          icao: airport.place.icao,
+          name: airport.place.name,
+        },
+      });
+      acknowledge({ ok: true });
+    } catch (error) {
+      console.warn(`Unable to look up target airport ${code}:`, error.message);
+      acknowledge({ ok: false, error: 'A repülőtér-adatbázis nem érhető el.' });
+    }
+  });
 
   socket.on('control', (payload = {}) => {
     const { action, value, mode } = payload;
