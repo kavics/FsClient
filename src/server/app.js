@@ -31,6 +31,9 @@ app.get('/remap-panel', (_req, res) => {
 app.get('/saved-positions', (_req, res) => {
   res.sendFile(path.join(webDir, 'saved-positions.html'));
 });
+app.get('/flight-plan', (_req, res) => {
+  res.sendFile(path.join(webDir, 'flight-plan.html'));
+});
 
 const state = {
   aircraft: {
@@ -315,7 +318,7 @@ function connectToSim() {
       );
       handle.addToDataDefinition(
         simDataDefinitionId,
-        'PLANE HEADING DEGREES MAGNETIC',
+        'PLANE HEADING DEGREES TRUE',
         'Degrees',
         SimConnectDataType.FLOAT64
       );

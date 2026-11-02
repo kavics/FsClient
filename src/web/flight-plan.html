@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="hu">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Repülési terv térkép | FS2024 Client</title>
+    <link rel="stylesheet" href="/flight-plan.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+  </head>
+  <body>
+    <main class="map-shell">
+      <header class="map-header">
+        <div>
+          <a class="back-link" href="/">← Főoldal</a>
+          <h1>Repülési terv</h1>
+          <p>MSFS flight plan betöltése és az aktuális géppozíció követése</p>
+        </div>
+        <div class="connection" id="connection" data-state="unknown">
+          <span class="connection-dot" aria-hidden="true"></span>
+          <span id="connection-label">Kapcsolódás…</span>
+        </div>
+      </header>
+
+      <section class="toolbar" aria-label="Térkép vezérlők">
+        <label class="file-button" for="plan-file">Flight plan betöltése (.PLN)</label>
+        <input id="plan-file" type="file" accept=".pln,.xml,application/xml,text/xml" />
+        <span id="plan-name" class="plan-name">Nincs betöltött terv</span>
+        <label class="follow-control">
+          <input id="follow-aircraft" type="checkbox" />
+          Gép követése
+        </label>
+      </section>
+
+      <p id="message" class="message" role="status" aria-live="polite">
+        Tölts be egy MSFS flight plan (.PLN) fájlt a térkép megjelenítéséhez.
+      </p>
+
+      <section class="map-layout">
+        <div id="map" class="map" aria-label="Repülési útvonal térkép"></div>
+        <aside class="flight-info">
+          <h2>Aktuális helyzet</h2>
+          <dl>
+            <dt>Koordináta</dt>
+            <dd id="position">Nincs szimulátoradat</dd>
+            <dt>Magasság</dt>
+            <dd id="altitude">—</dd>
+            <dt>Irány</dt>
+            <dd id="heading">—</dd>
+          </dl>
+          <h2>Útvonal</h2>
+          <p id="waypoint-count">Nincs betöltött terv</p>
+          <ol id="waypoint-list" class="waypoint-list"></ol>
+        </aside>
+      </section>
+      <footer>© OpenStreetMap közreműködők · térképadatok OpenStreetMap</footer>
+    </main>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
+    <script src="/flight-plan-parser.js"></script>
+    <script src="/flight-plan.js"></script>
+  </body>
+</html>

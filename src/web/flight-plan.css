@@ -1,0 +1,86 @@
+:root {
+  color-scheme: dark;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #e7eee9;
+  background: #101714;
+}
+
+* { box-sizing: border-box; }
+
+body { margin: 0; min-height: 100vh; padding: 20px; }
+
+.map-shell {
+  width: min(1440px, 100%);
+  margin: 0 auto;
+  padding: 24px;
+  border: 1px solid #34413a;
+  background: #18211c;
+}
+
+.map-header, .toolbar, .connection { display: flex; align-items: center; }
+.map-header { justify-content: space-between; gap: 20px; }
+.back-link { color: #a9dbba; font-size: 0.85rem; text-decoration: none; }
+h1 { margin: 12px 0 4px; font-size: clamp(1.5rem, 3vw, 2rem); }
+.map-header p, footer { color: #9aa89f; font-size: 0.82rem; }
+.connection { gap: 8px; color: #b7c3bb; font-size: 0.8rem; white-space: nowrap; }
+.connection-dot { width: 9px; height: 9px; border-radius: 50%; background: #e3a949; }
+.connection[data-state="connected"] .connection-dot { background: #65cf91; }
+.connection[data-state="disconnected"] .connection-dot { background: #ed7474; }
+
+.toolbar { min-height: 52px; flex-wrap: wrap; gap: 14px; margin-top: 20px; }
+#plan-file { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
+.file-button {
+  display: inline-flex;
+  min-height: 38px;
+  align-items: center;
+  padding: 0 14px;
+  border: 1px solid #557565;
+  color: #d7f0df;
+  background: #294536;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+.file-button:hover { background: #345b44; }
+.plan-name { min-width: 150px; flex: 1; overflow: hidden; color: #aeb9b1; font-size: 0.8rem; text-overflow: ellipsis; white-space: nowrap; }
+.follow-control { display: flex; align-items: center; gap: 8px; color: #c1ccc4; font-size: 0.8rem; }
+.follow-control input { accent-color: #69ce91; }
+.message { min-height: 20px; margin: 8px 0 12px; color: #aab8af; font-size: 0.82rem; }
+.message[data-kind="error"] { color: #ff9a9a; }
+
+.map-layout { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 16px; }
+.map { min-height: 62vh; border: 1px solid #34413a; background: #111a16; }
+.flight-info { padding: 16px; border: 1px solid #34413a; background: #131b17; }
+.flight-info h2 { margin: 0 0 12px; font-size: 0.88rem; letter-spacing: 0.04em; text-transform: uppercase; }
+.flight-info h2:not(:first-child) { margin-top: 24px; }
+.flight-info dl { display: grid; grid-template-columns: 1fr; gap: 5px; margin: 0; }
+.flight-info dt { color: #9aa89f; font-size: 0.7rem; }
+.flight-info dd { margin: 0 0 9px; overflow-wrap: anywhere; font-size: 0.8rem; font-variant-numeric: tabular-nums; }
+#waypoint-count { color: #aeb9b1; font-size: 0.78rem; }
+.waypoint-list { display: grid; gap: 8px; max-height: 36vh; overflow-y: auto; margin: 0; padding-left: 22px; color: #d9e3dc; font-size: 0.76rem; }
+.waypoint-list li { padding-left: 2px; }
+.waypoint-list small { display: block; margin-top: 2px; color: #95a49a; font-variant-numeric: tabular-nums; }
+footer { margin-top: 10px; text-align: right; }
+
+.aircraft-marker {
+  display: flex;
+  width: 32px;
+  height: 32px;
+  align-items: center;
+  justify-content: center;
+  color: #54d6ff;
+  filter: drop-shadow(0 1px 3px #07111f) drop-shadow(0 0 2px #07111f);
+  transform-origin: center;
+}
+.aircraft-marker svg { width: 30px; height: 30px; fill: currentColor; }
+.waypoint-dot { border: 2px solid #f4d36b; border-radius: 50%; background: #674b15; }
+
+@media (max-width: 760px) {
+  body { padding: 8px; }
+  .map-shell { padding: 14px; }
+  .map-layout { grid-template-columns: 1fr; }
+  .map { min-height: 52vh; }
+  .flight-info { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
+  .flight-info h2:not(:first-child) { margin-top: 0; }
+  .waypoint-list { grid-column: 2; grid-row: 2 / span 3; }
+}

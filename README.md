@@ -8,7 +8,7 @@ The Node.js server connects to the simulator through SimConnect, serves the web 
 
 ## Client
 
-The browser-based client includes the autopilot control panel and the Saved positions page for capturing, browsing, importing, and exporting positions. The pairing page is not functional yet. Autopilot support varies by aircraft, and not all functions work on every aircraft.
+The browser-based client includes the autopilot control panel, the Saved positions page for capturing, browsing, importing, and exporting positions, and a flight plan map for displaying an MSFS `.PLN` file with the live aircraft position. The map uses Leaflet and OpenStreetMap tiles and requires an internet connection. The pairing page is not functional yet. Autopilot support varies by aircraft, and not all functions work on every aircraft.
 
 ## Requirements
 
