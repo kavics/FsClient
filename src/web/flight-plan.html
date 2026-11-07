@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Repülési terv térkép | FS2024 Client</title>
+    <title>Repülési térkép | FS2024 Client</title>
     <link rel="stylesheet" href="/flight-plan.css" />
     <link
       rel="stylesheet"
@@ -17,8 +17,8 @@
       <header class="map-header">
         <div>
           <a class="back-link" href="/">← Főoldal</a>
-          <h1>Repülési terv</h1>
-          <p>MSFS flight plan betöltése és az aktuális géppozíció követése</p>
+          <h1>Repülési térkép</h1>
+          <p>Útvonaltervezés repülőtér-kódokkal és élő szimulátoradatokkal</p>
         </div>
         <div class="connection" id="connection" data-state="unknown">
           <span class="connection-dot" aria-hidden="true"></span>
@@ -26,35 +26,55 @@
         </div>
       </header>
 
-      <section class="toolbar" aria-label="Térkép vezérlők">
-        <label class="file-button" for="plan-file">Flight plan betöltése (.PLN)</label>
-        <input id="plan-file" type="file" accept=".pln,.xml,application/xml,text/xml" />
-        <span id="plan-name" class="plan-name">Nincs betöltött terv</span>
-        <label class="follow-control">
-          <input id="follow-aircraft" type="checkbox" />
-          Gép követése
+      <form id="route-form" class="route-form">
+        <label>
+          Induló reptér
+          <input id="origin-code" name="origin" type="text" placeholder="LHTL" maxlength="4" autocomplete="off" required />
         </label>
-      </section>
+        <span class="route-arrow" aria-hidden="true">→</span>
+        <label>
+          Célreptér
+          <input id="destination-code" name="destination" type="text" placeholder="LHBP" maxlength="4" autocomplete="off" required />
+        </label>
+        <button id="show-route" class="route-button" type="submit">Útvonal mutatása</button>
+      </form>
 
       <p id="message" class="message" role="status" aria-live="polite">
-        Tölts be egy MSFS flight plan (.PLN) fájlt a térkép megjelenítéséhez.
+        Add meg a két repülőtér kódját az útvonal megjelenítéséhez.
       </p>
 
       <section class="map-layout">
         <div id="map" class="map" aria-label="Repülési útvonal térkép"></div>
         <aside class="flight-info">
-          <h2>Aktuális helyzet</h2>
-          <dl>
-            <dt>Koordináta</dt>
-            <dd id="position">Nincs szimulátoradat</dd>
-            <dt>Magasság</dt>
-            <dd id="altitude">—</dd>
-            <dt>Irány</dt>
-            <dd id="heading">—</dd>
-          </dl>
-          <h2>Útvonal</h2>
-          <p id="waypoint-count">Nincs betöltött terv</p>
-          <ol id="waypoint-list" class="waypoint-list"></ol>
+          <section>
+            <h2>Élő repülési adatok</h2>
+            <dl>
+              <dt>Gép pozíciója</dt>
+              <dd id="position">Nincs szimulátoradat</dd>
+              <dt>Magasság</dt>
+              <dd id="altitude">—</dd>
+              <dt>Irány</dt>
+              <dd id="heading">—</dd>
+              <dt>Távolság a céltól</dt>
+              <dd id="distance">—</dd>
+            </dl>
+          </section>
+          <section>
+            <h2>Szimulátor</h2>
+            <dl>
+              <dt>Repülőgép</dt>
+              <dd id="aircraft-type">—</dd>
+              <dt>Hívójel</dt>
+              <dd id="callsign">—</dd>
+              <dt>Azonosító</dt>
+              <dd id="aircraft-id">—</dd>
+            </dl>
+          </section>
+          <section class="altitude-legend">
+            <h2>Előzmény magassága</h2>
+            <div class="legend-bar" aria-hidden="true"></div>
+            <div class="legend-labels"><span>0 ft</span><span>15 000 ft</span><span>30 000 ft</span></div>
+          </section>
         </aside>
       </section>
       <footer>© OpenStreetMap közreműködők · térképadatok OpenStreetMap</footer>
@@ -66,7 +86,6 @@
       integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
       crossorigin=""
     ></script>
-    <script src="/flight-plan-parser.js"></script>
     <script src="/flight-plan.js"></script>
   </body>
 </html>

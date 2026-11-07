@@ -69,11 +69,16 @@ function setChip(id, active) {
   }
 }
 
+function getTargetAirportCode(airport) {
+  return airport?.code || airport?.icao || '';
+}
+
 function renderTargetDistance(state) {
   if (!targetAirportInputEl) {
     return;
   }
-  const targetMatchesInput = state.targetAirport?.icao === targetAirportInputEl.value.trim().toUpperCase();
+  const targetMatchesInput = getTargetAirportCode(state.targetAirport)
+    === targetAirportInputEl.value.trim().toUpperCase();
   if (targetDistanceOutputEl) {
     targetDistanceOutputEl.value = targetMatchesInput && Number.isFinite(state.targetDistanceNm)
       ? `${state.targetDistanceNm.toFixed(1)} NM`
@@ -86,7 +91,7 @@ function renderTargetDistance(state) {
       : '-- FPM';
   }
   if (targetAirportStatusEl && targetMatchesInput && state.targetAirport) {
-    targetAirportStatusEl.textContent = [state.targetAirport.icao, state.targetAirport.name]
+    targetAirportStatusEl.textContent = [getTargetAirportCode(state.targetAirport), state.targetAirport.name]
       .filter(Boolean)
       .join(' · ');
   }
@@ -99,7 +104,7 @@ function renderState(state) {
   if (aircraftCallsignEl) aircraftCallsignEl.textContent = state.aircraft?.callsign || 'Unknown callsign';
   if (aircraftIdentifierEl) aircraftIdentifierEl.textContent = state.aircraft?.identifier || 'Unknown ID';
   if (targetAirportInputEl && !isEditing(targetAirportInputEl) && !targetAirportPending && !targetAirportHasError) {
-    targetAirportInputEl.value = state.targetAirport?.icao || '';
+    targetAirportInputEl.value = getTargetAirportCode(state.targetAirport);
   }
   renderTargetDistance(state);
 
@@ -195,7 +200,7 @@ if (targetAirportFormEl && targetAirportInputEl) {
 
     const code = targetAirportInputEl.value.trim().toUpperCase();
     targetAirportInputEl.value = code;
-    const currentCode = latestState?.targetAirport?.icao || '';
+    const currentCode = getTargetAirportCode(latestState?.targetAirport);
     if (code === currentCode && !targetAirportHasError) {
       if (latestState) {
         renderTargetDistance(latestState);

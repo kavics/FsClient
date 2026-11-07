@@ -17,7 +17,7 @@ body { margin: 0; min-height: 100vh; padding: 20px; }
   background: #18211c;
 }
 
-.map-header, .toolbar, .connection { display: flex; align-items: center; }
+.map-header, .connection { display: flex; align-items: center; }
 .map-header { justify-content: space-between; gap: 20px; }
 .back-link { color: #a9dbba; font-size: 0.85rem; text-decoration: none; }
 h1 { margin: 12px 0 4px; font-size: clamp(1.5rem, 3vw, 2rem); }
@@ -27,41 +27,82 @@ h1 { margin: 12px 0 4px; font-size: clamp(1.5rem, 3vw, 2rem); }
 .connection[data-state="connected"] .connection-dot { background: #65cf91; }
 .connection[data-state="disconnected"] .connection-dot { background: #ed7474; }
 
-.toolbar { min-height: 52px; flex-wrap: wrap; gap: 14px; margin-top: 20px; }
-#plan-file { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
-.file-button {
-  display: inline-flex;
-  min-height: 38px;
-  align-items: center;
-  padding: 0 14px;
+.route-form {
+  display: flex;
+  align-items: end;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 20px;
+}
+.route-form label { display: grid; gap: 6px; color: #c1ccc4; font-size: 0.76rem; }
+.route-form input {
+  width: 150px;
+  min-height: 40px;
+  padding: 0 12px;
   border: 1px solid #557565;
+  border-radius: 3px;
+  color: #e7eee9;
+  background: #111a16;
+  font: inherit;
+  font-size: 0.9rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.route-form input:focus-visible, .route-button:focus-visible {
+  outline: 2px solid #83dba2;
+  outline-offset: 2px;
+}
+.route-arrow { padding: 0 2px 10px; color: #9aa89f; }
+.route-button {
+  min-height: 40px;
+  padding: 0 16px;
+  border: 1px solid #557565;
+  border-radius: 3px;
   color: #d7f0df;
   background: #294536;
   cursor: pointer;
+  font: inherit;
   font-size: 0.82rem;
   font-weight: 700;
 }
-.file-button:hover { background: #345b44; }
-.plan-name { min-width: 150px; flex: 1; overflow: hidden; color: #aeb9b1; font-size: 0.8rem; text-overflow: ellipsis; white-space: nowrap; }
-.follow-control { display: flex; align-items: center; gap: 8px; color: #c1ccc4; font-size: 0.8rem; }
-.follow-control input { accent-color: #69ce91; }
-.message { min-height: 20px; margin: 8px 0 12px; color: #aab8af; font-size: 0.82rem; }
+.route-button:hover { background: #345b44; }
+.route-button:disabled { cursor: wait; opacity: 0.65; }
+.message { min-height: 20px; margin: 12px 0; color: #aab8af; font-size: 0.82rem; }
 .message[data-kind="error"] { color: #ff9a9a; }
 
-.map-layout { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 16px; }
-.map { min-height: 62vh; border: 1px solid #34413a; background: #111a16; }
-.flight-info { padding: 16px; border: 1px solid #34413a; background: #131b17; }
-.flight-info h2 { margin: 0 0 12px; font-size: 0.88rem; letter-spacing: 0.04em; text-transform: uppercase; }
-.flight-info h2:not(:first-child) { margin-top: 24px; }
+.map-layout { display: grid; grid-template-columns: minmax(0, 1fr) 270px; gap: 16px; }
+.map { min-height: 68vh; border: 1px solid #34413a; background: #111a16; }
+.flight-info {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  padding: 16px;
+  border: 1px solid #34413a;
+  background: #131b17;
+}
+.flight-info h2 {
+  margin: 0 0 12px;
+  font-size: 0.88rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
 .flight-info dl { display: grid; grid-template-columns: 1fr; gap: 5px; margin: 0; }
 .flight-info dt { color: #9aa89f; font-size: 0.7rem; }
-.flight-info dd { margin: 0 0 9px; overflow-wrap: anywhere; font-size: 0.8rem; font-variant-numeric: tabular-nums; }
-#waypoint-count { color: #aeb9b1; font-size: 0.78rem; }
-.waypoint-list { display: grid; gap: 8px; max-height: 36vh; overflow-y: auto; margin: 0; padding-left: 22px; color: #d9e3dc; font-size: 0.76rem; }
-.waypoint-list li { padding-left: 2px; }
-.waypoint-list small { display: block; margin-top: 2px; color: #95a49a; font-variant-numeric: tabular-nums; }
+.flight-info dd {
+  margin: 0 0 8px;
+  overflow-wrap: anywhere;
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+}
+.legend-bar {
+  height: 10px;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #2dcd73, #ffd34a 50%, #ef4c4c);
+}
+.legend-labels { display: flex; justify-content: space-between; margin-top: 5px; color: #9aa89f; font-size: 0.67rem; }
 footer { margin-top: 10px; text-align: right; }
 
+.aircraft-icon-wrap { border: 0; background: transparent; }
 .aircraft-marker {
   display: flex;
   width: 32px;
@@ -73,14 +114,12 @@ footer { margin-top: 10px; text-align: right; }
   transform-origin: center;
 }
 .aircraft-marker svg { width: 30px; height: 30px; fill: currentColor; }
-.waypoint-dot { border: 2px solid #f4d36b; border-radius: 50%; background: #674b15; }
 
 @media (max-width: 760px) {
   body { padding: 8px; }
   .map-shell { padding: 14px; }
   .map-layout { grid-template-columns: 1fr; }
   .map { min-height: 52vh; }
-  .flight-info { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
-  .flight-info h2:not(:first-child) { margin-top: 0; }
-  .waypoint-list { grid-column: 2; grid-row: 2 / span 3; }
+  .flight-info { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 16px; }
+  .altitude-legend { grid-column: 1 / -1; }
 }

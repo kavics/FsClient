@@ -8,7 +8,7 @@ The Node.js server connects to the simulator through SimConnect, serves the web 
 
 ## Client
 
-The browser-based client includes the autopilot control panel, the Saved positions page for capturing, browsing, importing, and exporting positions, and a flight plan map for displaying an MSFS `.PLN` file with the live aircraft position. The map uses Leaflet and OpenStreetMap tiles and requires an internet connection. The pairing page is not functional yet. Autopilot support varies by aircraft, and not all functions work on every aircraft.
+The browser-based client includes the autopilot control panel, the Saved positions page for capturing, browsing, importing, and exporting positions, and a flight map with manually entered airport codes. The map draws a dense dashed direct route, records the live aircraft position once per second in a two-hour in-memory history, and renders altitude-colored points and segments on a Leaflet canvas (green at ground level through yellow to red at 30,000 feet). It continuously shows position, altitude, heading, distance to destination, aircraft type, callsign, and identifier from the simulator. Airport lookup accepts ICAO and FAA/local airport codes. The map uses Leaflet and OpenStreetMap tiles and requires an internet connection. The pairing page is not functional yet. Autopilot support varies by aircraft, and not all functions work on every aircraft.
 
 ## Requirements
 
