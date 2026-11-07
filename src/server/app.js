@@ -31,6 +31,9 @@ app.get('/remap-panel', (_req, res) => {
 app.get('/saved-positions', (_req, res) => {
   res.sendFile(path.join(webDir, 'saved-positions.html'));
 });
+app.get('/flight-plan', (_req, res) => {
+  res.sendFile(path.join(webDir, 'flight-plan.html'));
+});
 
 const state = {
   aircraft: {
@@ -315,7 +318,7 @@ function connectToSim() {
       );
       handle.addToDataDefinition(
         simDataDefinitionId,
-        'PLANE HEADING DEGREES MAGNETIC',
+        'PLANE HEADING DEGREES TRUE',
         'Degrees',
         SimConnectDataType.FLOAT64
       );
@@ -742,6 +745,52 @@ io.on('connection', (socket) => {
   
   socket.emit('state', { ...state, runLocation });
 
+  socket.on('flightRoute:resolve', async (payload = {}, acknowledge = () => {}) => {
+    payload = payload && typeof payload === 'object' ? payload : {};
+    const originCode = typeof payload.originCode === 'string' ? payload.originCode.trim().toUpperCase() : '';
+    const destinationCode = typeof payload.destinationCode === 'string'
+      ? payload.destinationCode.trim().toUpperCase()
+      : '';
+    if (!/^[A-Z0-9]{3,4}$/.test(originCode) || !/^[A-Z0-9]{3,4}$/.test(destinationCode)) {
+      acknowledge({ ok: false, error: 'Adj meg két érvényes, 3 vagy 4 karakteres repülőtér-kódot.' });
+      return;
+    }
+
+    try {
+      const [origin, destination] = await Promise.all([
+        savedPositionsFeature.findAirportByCode(originCode),
+        savedPositionsFeature.findAirportByCode(destinationCode),
+      ]);
+      if (!origin) {
+        acknowledge({ ok: false, error: `Nem található induló reptér ezzel a kóddal: ${originCode}.` });
+        return;
+      }
+      if (!destination) {
+        acknowledge({ ok: false, error: `Nem található célreptér ezzel a kóddal: ${destinationCode}.` });
+        return;
+      }
+
+      acknowledge({
+        ok: true,
+        origin: {
+          code: originCode,
+          name: origin.place.name || originCode,
+          latitude: origin.latitude,
+          longitude: origin.longitude,
+        },
+        destination: {
+          code: destinationCode,
+          name: destination.place.name || destinationCode,
+          latitude: destination.latitude,
+          longitude: destination.longitude,
+        },
+      });
+    } catch (error) {
+      console.warn(`Unable to resolve flight route ${originCode} to ${destinationCode}:`, error.message);
+      acknowledge({ ok: false, error: 'A repülőtér-adatbázis nem érhető el.' });
+    }
+  });
+
   socket.on('targetAirport:set', async (payload = {}, acknowledge = () => {}) => {
     const lookupId = ++targetAirportLookupId;
     const code = typeof payload.code === 'string' ? payload.code.trim().toUpperCase() : '';
@@ -751,8 +800,8 @@ io.on('connection', (socket) => {
       acknowledge({ ok: true });
       return;
     }
-    if (!/^[A-Z]{4}$/.test(code)) {
-      acknowledge({ ok: false, error: 'Adj meg egy érvényes, négybetűs ICAO kódot.' });
+    if (!/^[A-Z0-9]{3,4}$/.test(code)) {
+      acknowledge({ ok: false, error: 'Adj meg egy érvényes, 3 vagy 4 karakteres repülőtér-kódot.' });
       return;
     }
 
@@ -763,7 +812,7 @@ io.on('connection', (socket) => {
         return;
       }
       if (!airport) {
-        acknowledge({ ok: false, error: `Nem található reptér ezzel az ICAO kóddal: ${code}.` });
+        acknowledge({ ok: false, error: `Nem található reptér ezzel a kóddal: ${code}.` });
         return;
       }
 
@@ -773,6 +822,7 @@ io.on('connection', (socket) => {
       };
       updateState({
         targetAirport: {
+          code,
           icao: airport.place.icao,
           name: airport.place.name,
         },

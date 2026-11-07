@@ -30,7 +30,14 @@ class AirportCatalog {
 
   async findByCode(code) {
     await this.load();
-    return this.airports.find((airport) => airport.place.icao === code) || null;
+    const normalizedCode = String(code).trim().toUpperCase();
+    return this.airports.find((airport) => [
+      airport.place.icao,
+      airport.place.ident,
+      airport.place.gpsCode,
+      airport.place.localCode,
+      airport.place.iataCode,
+    ].some((candidate) => typeof candidate === 'string' && candidate.toUpperCase() === normalizedCode)) || null;
   }
 
   async load() {
@@ -78,7 +85,11 @@ class AirportCatalog {
       if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
         return [];
       }
-      const code = /^[A-Z]{4}$/.test(row.gps_code || '') ? row.gps_code : /^[A-Z]{4}$/.test(row.ident || '') ? row.ident : null;
+      const icao = /^[A-Z0-9]{4}$/.test(row.gps_code || '')
+        ? row.gps_code
+        : /^[A-Z0-9]{4}$/.test(row.ident || '')
+          ? row.ident
+          : null;
       const country = row.iso_country && /^[A-Z]{2}$/.test(row.iso_country)
         ? new Intl.DisplayNames(['en'], { type: 'region' }).of(row.iso_country)
         : null;
@@ -86,7 +97,11 @@ class AirportCatalog {
         latitude,
         longitude,
         place: {
-          icao: code,
+          icao,
+          ident: row.ident || null,
+          gpsCode: row.gps_code || null,
+          localCode: row.local_code || null,
+          iataCode: row.iata_code || null,
           name: row.name || null,
           city: row.municipality || null,
           country: country || row.iso_country || null,

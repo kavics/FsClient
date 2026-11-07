@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="hu">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Repülési térkép | FS2024 Client</title>
+    <link rel="stylesheet" href="/flight-plan.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+  </head>
+  <body>
+    <main class="map-shell">
+      <header class="map-header">
+        <div>
+          <a class="back-link" href="/">← Főoldal</a>
+          <h1>Repülési térkép</h1>
+          <p>Útvonaltervezés repülőtér-kódokkal és élő szimulátoradatokkal</p>
+        </div>
+        <div class="connection" id="connection" data-state="unknown">
+          <span class="connection-dot" aria-hidden="true"></span>
+          <span id="connection-label">Kapcsolódás…</span>
+        </div>
+      </header>
+
+      <form id="route-form" class="route-form">
+        <label>
+          Induló reptér
+          <input id="origin-code" name="origin" type="text" placeholder="LHTL" maxlength="4" autocomplete="off" required />
+        </label>
+        <span class="route-arrow" aria-hidden="true">→</span>
+        <label>
+          Célreptér
+          <input id="destination-code" name="destination" type="text" placeholder="LHBP" maxlength="4" autocomplete="off" required />
+        </label>
+        <button id="show-route" class="route-button" type="submit">Útvonal mutatása</button>
+      </form>
+
+      <p id="message" class="message" role="status" aria-live="polite">
+        Add meg a két repülőtér kódját az útvonal megjelenítéséhez.
+      </p>
+
+      <section class="map-layout">
+        <div id="map" class="map" aria-label="Repülési útvonal térkép"></div>
+        <aside class="flight-info">
+          <section>
+            <h2>Élő repülési adatok</h2>
+            <dl>
+              <dt>Gép pozíciója</dt>
+              <dd id="position">Nincs szimulátoradat</dd>
+              <dt>Magasság</dt>
+              <dd id="altitude">—</dd>
+              <dt>Irány</dt>
+              <dd id="heading">—</dd>
+              <dt>Távolság a céltól</dt>
+              <dd id="distance">—</dd>
+            </dl>
+          </section>
+          <section>
+            <h2>Szimulátor</h2>
+            <dl>
+              <dt>Repülőgép</dt>
+              <dd id="aircraft-type">—</dd>
+              <dt>Hívójel</dt>
+              <dd id="callsign">—</dd>
+              <dt>Azonosító</dt>
+              <dd id="aircraft-id">—</dd>
+            </dl>
+          </section>
+          <section class="altitude-legend">
+            <h2>Előzmény magassága</h2>
+            <div class="legend-bar" aria-hidden="true"></div>
+            <div class="legend-labels"><span>0 ft</span><span>15 000 ft</span><span>30 000 ft</span></div>
+          </section>
+        </aside>
+      </section>
+      <footer>© OpenStreetMap közreműködők · térképadatok OpenStreetMap</footer>
+    </main>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
+    <script src="/flight-plan.js"></script>
+  </body>
+</html>
